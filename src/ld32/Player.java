@@ -104,6 +104,15 @@ public class Player extends Entity {
                     jp.extend();
                     velY = -12;
                 }
+            }else if(e instanceof Flag) {
+                float pxr = (e.getX()+0.75f)-getX();
+                float pxl = (getX()+1)-(e.getX()+0.25f);
+                float pyb = (e.getY())-getY();
+                float pyt = (getY()+1)-e.getY();
+                
+                if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
+                    level.setFinished(true);
+                }
             }
         }
         

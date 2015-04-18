@@ -12,11 +12,15 @@ public class Level {
     
     private ArrayList<Entity> entities;
     private Player player;
+    private String nextLevel;
+    private boolean finished;
     
     public Level(Player player) {
         entities = new ArrayList<>();
         this.player = player;
         player.setLevel(this);
+        finished = false;
+        nextLevel = null;
     }
     
     public void update(float delta, InputManager input) {
@@ -44,12 +48,17 @@ public class Level {
     public Level(String filename) {
         entities = new ArrayList<>();
         player = null;
+        finished = false;
         try {
             BufferedReader in = new BufferedReader(new FileReader("./res/"+filename));
+            
             String line = in.readLine();
             String[] playerCoords = line.split(",");
             player = new Player(Integer.parseInt(playerCoords[0]), Integer.parseInt(playerCoords[1]));
             player.setLevel(this);
+            
+            line = in.readLine();
+            nextLevel = line;
             
             int y = 0;
             while((line = in.readLine()) != null) {
@@ -59,9 +68,18 @@ public class Level {
                     if(token.isEmpty())
                         continue;
                     
-                    int id = Integer.parseInt(token);
-                    if(id != 3)
-                        entities.add(new Wall(x, y, id));
+                    switch(token) {
+                        case "P":
+                            entities.add(new JumpPad(x,y));
+                            break;
+                        case "F":
+                            entities.add(new Flag(x,y));
+                            break;
+                        default:
+                            int id = Integer.parseInt(token);
+                            if(id != 3)
+                                entities.add(new Wall(x, y, id));
+                    }
                     x++;
                 }
                 y++;
@@ -75,6 +93,18 @@ public class Level {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public String getNextLevel() {
+        return nextLevel;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
     
 }
