@@ -1,8 +1,10 @@
-package ld32;
+package ld32.entity;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import ld32.Level;
+import ld32.ResourceLoader;
 
 
 public class Wall extends Entity {
@@ -10,8 +12,8 @@ public class Wall extends Entity {
     private int id;
     private BufferedImage tilemap;
     
-    public Wall(int x, int y, int id) {
-        super(x, y);
+    public Wall(int x, int y, Level l, int id) {
+        super(x, y, l);
         tilemap = ResourceLoader.getImage("dirt.png");
         this.id = id;
     }

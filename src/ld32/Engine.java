@@ -55,6 +55,9 @@ public class Engine {
         long nextUpdate = System.nanoTime();
         while(running && !screen.isCloseRequested()) {
             long now = System.nanoTime();
+            if(now-nextUpdate > 1000000000/FPS*2) {
+                nextUpdate = now;
+            }
             if(now >= nextUpdate) {
                 nextUpdate += 1000000000/FPS;
                 inp.update();

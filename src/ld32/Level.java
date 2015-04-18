@@ -1,11 +1,20 @@
 package ld32;
 
+import ld32.entity.JumpPad;
+import ld32.entity.Player;
+import ld32.entity.Flag;
+import ld32.entity.Spikes;
+import ld32.entity.Wall;
+import ld32.entity.Entity;
 import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import ld32.entity.Decoration;
+import ld32.entity.Fireball;
+import ld32.entity.Platform;
 
 
 public class Level {
@@ -14,14 +23,6 @@ public class Level {
     private Player player;
     private String nextLevel;
     private boolean finished;
-    
-    public Level(Player player) {
-        entities = new ArrayList<>();
-        this.player = player;
-        player.setLevel(this);
-        finished = false;
-        nextLevel = null;
-    }
     
     public void update(float delta, InputManager input) {
         player.update(delta, input);
@@ -65,32 +66,46 @@ public class Level {
                     
                     switch(token) {
                         case "P":
-                            entities.add(new JumpPad(x,y));
+                            entities.add(new JumpPad(x,y,this));
                             break;
                         case "F":
-                            entities.add(new Flag(x,y));
+                            entities.add(new Flag(x,y,this));
                             break;
                         case "SR":
-                            entities.add(new Spikes(x,y,1));
+                            entities.add(new Spikes(x,y,this,1));
                             break;
                         case "SL":
-                            entities.add(new Spikes(x,y,3));
+                            entities.add(new Spikes(x,y,this,3));
                             break;
                         case "SU":
-                            entities.add(new Spikes(x,y,0));
+                            entities.add(new Spikes(x,y,this,0));
                             break;
                         case "SD":
-                            entities.add(new Spikes(x,y,2));
+                            entities.add(new Spikes(x,y,this,2));
                             break;
                         case "X":
-                            player = new Player(x,y);
-                            player.setLevel(this);
+                            player = new Player(x,y,this);
+                            break;
+                        case "=":
+                            entities.add(new Platform(x, y, this, true));
+                            break;
+                        case "|":
+                            entities.add(new Platform(x, y, this, false));
+                            break;
+                        case "B":
+                            entities.add(new Decoration(x,y,12,this));
+                            break;
+                        case "FV":
+                            entities.add(new Fireball(x, y, this, false));
+                            break;
+                        case "FH":
+                            entities.add(new Fireball(x, y, this, true));
                             break;
                         case "_":
                             break;
                         default:
                             int id = Integer.parseInt(token);
-                            entities.add(new Wall(x, y, id));
+                            entities.add(new Wall(x, y, this, id));
                     }
                     x++;
                 }

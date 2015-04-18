@@ -1,9 +1,16 @@
-package ld32;
+package ld32.entity;
 
+import ld32.entity.Spikes;
+import ld32.entity.Wall;
+import ld32.entity.Entity;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import javax.sound.sampled.Clip;
+import ld32.InputManager;
+import ld32.Level;
+import ld32.ResourceLoader;
+import static ld32.entity.Platform.SPEED;
 
 
 public class Player extends Entity {
@@ -17,13 +24,12 @@ public class Player extends Entity {
     private BufferedImage sprite;
     private boolean direction;
     private boolean lastOnGround;
-    private Level level;
     private float velY;
     private boolean exploded;
     private Clip fuss;
     
-    public Player(float x, float y) {
-        super(x, y);
+    public Player(float x, float y, Level l) {
+        super(x, y, l);
         animationTime = 0;
         sprite = ResourceLoader.getImage("player.png");
         ResourceLoader.getSound("explode.wav");
@@ -57,7 +63,7 @@ public class Player extends Entity {
         boolean onGround = false;
         boolean explode = false;
         
-        for(Entity e : level.getEntities()) {
+        for(Entity e : getLevel().getEntities()) {
             if(e instanceof Wall) {
                 Wall w = (Wall) e;
                 
@@ -111,13 +117,67 @@ public class Player extends Entity {
                 float pyt = (getY()+1)-e.getY();
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
-                    level.setFinished(true);
+                    getLevel().setFinished(true);
                 }
             }else if(e instanceof Spikes) {
                 float pxr = (e.getX()+1)-getX();
                 float pxl = (getX()+1)-e.getX();
                 float pyb = (e.getY()+1)-getY();
                 float pyt = (getY()+1)-e.getY();
+                
+                if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
+                    explode();
+                }
+            }else if(e instanceof Platform) {
+                Platform p = (Platform)e;
+                float pxr = (e.getX()+1)-getX();
+                float pxl = (getX()+1)-e.getX();
+                float pyb = (e.getY()+0.5f)-getY();
+                float pyt = (getY()+1)-e.getY();
+                
+                if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
+                    float px = Math.min(pxr, pxl);
+                    float py = Math.min(pyb, pyt);
+                    if(px > 0.3 && py > 0.3)
+                        explode();
+                    if(px < py+0.075f) {
+                        if(pxr < pxl) {
+                            setX(e.getX()+1);
+                        }else {
+                            setX(e.getX()-1);
+                        }
+                        if(lastOnGround) {
+                            explode = true;
+                        }else {
+                            explodeTime = 0;
+                        }
+                    }else {
+                        if(pyb < pyt) {
+                            setY(e.getY()+0.5f);
+                            velY = Math.max(0, velY);
+                        }else {
+                            if(velY >= 0) {
+                                velY = 0;
+                                onGround = true;
+                                float s = (p.getDirection() ? Platform.SPEED : -Platform.SPEED);
+                                if(p.getDirection() && !p.getDirection1()) {
+                                    velY = Platform.SPEED;
+                                }
+                                if(p.getDirection1()) {
+                                    setX(getX() + (s - dx) * delta);
+                                }else {
+                                    setX(getX() - dx * delta);
+                                }
+                            }
+                            setY(e.getY()-1);
+                        }
+                    }
+                }
+            }else if(e instanceof Fireball) {
+                float pxr = (e.getX()+0.75f)-getX();
+                float pxl = (getX()+1)-(e.getX()+0.25f);
+                float pyb = (e.getY()+0.75f)-getY();
+                float pyt = (getY()+1)-(e.getY()+0.25f);
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
                     explode();
@@ -166,10 +226,6 @@ public class Player extends Entity {
         int sy2 = sy1 + 32;
         
         g.drawImage(sprite, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
     }
 
     public boolean isExploded() {
