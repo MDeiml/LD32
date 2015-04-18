@@ -33,6 +33,7 @@ public class Engine {
     
     public void run() {
         Level level = new Level("test_level");
+        level.addEntity(new JumpPad(5,4));
         
         Graphics g = screen.getBufferGraphics();
         InputManager inp = screen.getInput();

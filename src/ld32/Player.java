@@ -92,6 +92,18 @@ public class Player extends Entity {
                         }
                     }
                 }
+            }else if(e instanceof JumpPad) {
+                JumpPad jp = (JumpPad)e;
+                if(jp.isExtended())
+                    continue;
+                float pxr = (jp.getX()+1)-getX();
+                float pxl = (getX()+1)-jp.getX();
+                float pyb = (jp.getY()+0.5f)-getY();
+                float pyt = (getY()+1)-(jp.getY()+0.5f);
+                if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
+                    jp.extend();
+                    velY = -12;
+                }
             }
         }
         
@@ -125,7 +137,7 @@ public class Player extends Entity {
     @Override
     public void render(Graphics g) {
         int dx1 = (int)(getX()*64);
-        int dy1 = (int)(getY()*64);
+        int dy1 = (int)(getY()*64)+4;
         int dx2 = dx1 + 64;
         int dy2 = dy1 + 64;
         
