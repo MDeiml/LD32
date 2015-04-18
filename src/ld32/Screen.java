@@ -16,6 +16,8 @@ public class Screen extends Frame {
     private boolean closeRequested;
     private BufferedImage buffer;
     private Graphics bufferGraphics;
+    private InputManager input;
+    private BufferedImage background;
     
     public Screen(int w, int h) {
         Dimension size = new Dimension(w, h);
@@ -26,6 +28,9 @@ public class Screen extends Frame {
         setLocationRelativeTo(null);
         setTitle(TITLE);
         
+        input = new InputManager();
+        addKeyListener(input);
+        
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -35,6 +40,7 @@ public class Screen extends Frame {
         
         buffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         bufferGraphics = buffer.getGraphics();
+        background = ResourceLoader.getImage("background.png");
         
         setVisible(true);
     }
@@ -47,8 +53,7 @@ public class Screen extends Frame {
     @Override
     public void update(Graphics g) {
         g.drawImage(buffer, 0, 0, null);
-        bufferGraphics.setColor(Color.WHITE);
-        bufferGraphics.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+        bufferGraphics.drawImage(background, 0, 0, null);
     }
 
     public synchronized boolean isCloseRequested() {
@@ -61,6 +66,10 @@ public class Screen extends Frame {
 
     public Graphics getBufferGraphics() {
         return bufferGraphics;
+    }
+
+    public InputManager getInput() {
+        return input;
     }
     
 }

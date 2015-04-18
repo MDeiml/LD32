@@ -13,7 +13,7 @@ public abstract class Entity {
     private float x;
     private float y;
     
-    public void update(float delta) {}
+    public void update(float delta, InputManager input) {}
     public void render(Graphics graphics) {}
 
     public float getX() {
