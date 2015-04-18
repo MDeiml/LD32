@@ -53,11 +53,6 @@ public class Level {
             BufferedReader in = new BufferedReader(new FileReader("./res/"+filename));
             
             String line = in.readLine();
-            String[] playerCoords = line.split(",");
-            player = new Player(Integer.parseInt(playerCoords[0]), Integer.parseInt(playerCoords[1]));
-            player.setLevel(this);
-            
-            line = in.readLine();
             nextLevel = line;
             
             int y = 0;
@@ -87,10 +82,15 @@ public class Level {
                         case "SD":
                             entities.add(new Spikes(x,y,2));
                             break;
+                        case "X":
+                            player = new Player(x,y);
+                            player.setLevel(this);
+                            break;
+                        case "_":
+                            break;
                         default:
                             int id = Integer.parseInt(token);
-                            if(id != 3)
-                                entities.add(new Wall(x, y, id));
+                            entities.add(new Wall(x, y, id));
                     }
                     x++;
                 }

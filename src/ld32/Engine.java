@@ -46,7 +46,7 @@ public class Engine {
         }
         music.loop();
         
-        String currentLevel = "test_level";
+        String currentLevel = "level1";
         Level level = new Level(currentLevel);
         
         Graphics g = screen.getBufferGraphics();
