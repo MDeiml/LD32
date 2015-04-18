@@ -68,7 +68,7 @@ public class Player extends Entity {
                 if(pxr > 0 && pxl > 0 && pyb > 0 && pyt > 0) {
                     float px = Math.min(pxr, pxl);
                     float py = Math.min(pyb, pyt);
-                    if(px < py+0.05f) {
+                    if(px < py+0.075f) {
                         if(pxr < pxl) {
                             setX(w.getX()+1);
                         }else {
@@ -94,24 +94,33 @@ public class Player extends Entity {
                 }
             }else if(e instanceof JumpPad) {
                 JumpPad jp = (JumpPad)e;
-                if(jp.isExtended())
-                    continue;
-                float pxr = (jp.getX()+1)-getX();
-                float pxl = (getX()+1)-jp.getX();
-                float pyb = (jp.getY()+0.5f)-getY();
-                float pyt = (getY()+1)-(jp.getY()+0.5f);
-                if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
-                    jp.extend();
-                    velY = -12;
+                if(!jp.isExtended()) {
+                    float pxr = (jp.getX()+1)-getX();
+                    float pxl = (getX()+1)-jp.getX();
+                    float pyb = (jp.getY()+0.5f)-getY();
+                    float pyt = (getY()+1)-(jp.getY()+0.5f);
+                    if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
+                        jp.extend();
+                        velY = -12;
+                    }
                 }
             }else if(e instanceof Flag) {
                 float pxr = (e.getX()+0.75f)-getX();
                 float pxl = (getX()+1)-(e.getX()+0.25f);
-                float pyb = (e.getY())-getY();
+                float pyb = (e.getY()+1)-getY();
                 float pyt = (getY()+1)-e.getY();
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
                     level.setFinished(true);
+                }
+            }else if(e instanceof Spikes) {
+                float pxr = (e.getX()+1)-getX();
+                float pxl = (getX()+1)-e.getX();
+                float pyb = (e.getY()+1)-getY();
+                float pyt = (getY()+1)-e.getY();
+                
+                if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
+                    explode();
                 }
             }
         }
@@ -137,7 +146,7 @@ public class Player extends Entity {
         lastOnGround = onGround;
     }
     
-    private void explode() {
+    public void explode() {
         ResourceLoader.playSound(ResourceLoader.getSound("explode.wav"));
         fuss.stop();
         exploded = true;

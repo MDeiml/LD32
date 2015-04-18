@@ -75,6 +75,18 @@ public class Level {
                         case "F":
                             entities.add(new Flag(x,y));
                             break;
+                        case "SR":
+                            entities.add(new Spikes(x,y,1));
+                            break;
+                        case "SL":
+                            entities.add(new Spikes(x,y,3));
+                            break;
+                        case "SU":
+                            entities.add(new Spikes(x,y,0));
+                            break;
+                        case "SD":
+                            entities.add(new Spikes(x,y,2));
+                            break;
                         default:
                             int id = Integer.parseInt(token);
                             if(id != 3)

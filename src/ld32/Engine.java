@@ -2,6 +2,10 @@ package ld32;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.Logger;
+import org.newdawn.easyogg.OggClip;
 
 
 public class Engine {
@@ -21,6 +25,7 @@ public class Engine {
         screen = new Screen(WIDTH, HEIGHT);
         running = false;
         state = S_PLAYING;
+        ResourceLoader.getSound("level_end.wav");
     }
     
     public void start() {
@@ -32,7 +37,17 @@ public class Engine {
     }
     
     public void run() {
-        Level level = new Level("test_level");
+        OggClip music = null;
+        try {
+            music = new OggClip(new FileInputStream("./res/music.ogg"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
+        music.loop();
+        
+        String currentLevel = "test_level";
+        Level level = new Level(currentLevel);
         
         Graphics g = screen.getBufferGraphics();
         InputManager inp = screen.getInput();
@@ -48,15 +63,20 @@ public class Engine {
                     level.render(g);
                     if(level.getPlayer().isExploded())
                         state = S_DEAD;
+                    if(inp.keyDown(KeyEvent.VK_R) || level.getPlayer().getY() > HEIGHT / 32f + 1) {
+                        level.getPlayer().explode();
+                    }
                 }else if(state == S_DEAD) {
                     g.drawImage(ResourceLoader.getImage("dead.png"), 0, 0, WIDTH, HEIGHT, null);
                     if(inp.keyDown(KeyEvent.VK_SPACE)) {
                         state = S_PLAYING;
-                        level = new Level("test_level");
+                        level = new Level(currentLevel);
                     }
                 }
                 if(level.isFinished()) {
-                    level = new Level(level.getNextLevel());
+                    currentLevel = level.getNextLevel();
+                    level = new Level(currentLevel);
+                    ResourceLoader.playSound(ResourceLoader.getSound("level_end.wav"));
                 }
                 screen.repaint();
             }
