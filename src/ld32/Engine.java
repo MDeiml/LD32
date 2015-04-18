@@ -1,5 +1,7 @@
 package ld32;
 
+import java.awt.Graphics;
+
 
 public class Engine {
     
@@ -24,11 +26,15 @@ public class Engine {
     }
     
     public void run() {
+        Player p = new Player(100,100);
         long nextUpdate = System.nanoTime();
+        Graphics g = screen.getBufferGraphics();
         while(running && !screen.isCloseRequested()) {
             long now = System.nanoTime();
             if(now >= nextUpdate) {
                 nextUpdate += 1000000000/FPS;
+                p.update(1f/FPS);
+                p.render(g);
                 screen.repaint();
             }
         }

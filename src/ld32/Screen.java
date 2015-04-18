@@ -47,7 +47,7 @@ public class Screen extends Frame {
     @Override
     public void update(Graphics g) {
         g.drawImage(buffer, 0, 0, null);
-        bufferGraphics.setColor(Color.BLACK);
+        bufferGraphics.setColor(Color.WHITE);
         bufferGraphics.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
     }
 
