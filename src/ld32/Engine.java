@@ -14,10 +14,12 @@ public class Engine {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final int COUNTDOWN_LENGTH = 3;
+    private static final float INTRO_LENGTH = 2*3;
     
     private static final int S_PLAYING = 0;
     private static final int S_DEAD = 1;
     private static final int S_COUNTDOWN = 2;
+    private static final int S_INTRO = 3;
     
     private boolean running;
     private Screen screen;
@@ -27,9 +29,12 @@ public class Engine {
     public Engine() {
         screen = new Screen(WIDTH, HEIGHT);
         running = false;
-        state = S_COUNTDOWN;
+        state = S_INTRO;
         timer = 0;
         ResourceLoader.getSound("level_end.wav");
+        ResourceLoader.getImage("intro1.png");
+        ResourceLoader.getImage("intro2.png");
+        ResourceLoader.getImage("intro3.png");
     }
     
     public void start() {
@@ -48,7 +53,7 @@ public class Engine {
             ex.printStackTrace();
             System.exit(1);
         }
-//        music.loop();
+        music.loop();
         
         String currentLevel = "level1";
         Level level = new Level(currentLevel);
@@ -88,6 +93,15 @@ public class Engine {
                     if(timer >= COUNTDOWN_LENGTH) {
                         state = S_PLAYING;
                     }
+                }else if(state == S_INTRO) {
+                    timer = Math.min(timer + 1f/FPS, INTRO_LENGTH);
+                    int id = (int)(timer/INTRO_LENGTH*3)+1;
+                    if(id >= 4) {
+                        state = S_COUNTDOWN;
+                        timer = 0;
+                        continue;
+                    }
+                    g.drawImage(ResourceLoader.getImage("intro"+id+".png"), 0, 0, WIDTH, HEIGHT, null);
                 }
                 if(level.isFinished()) {
                     state = S_COUNTDOWN;
