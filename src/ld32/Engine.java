@@ -14,7 +14,7 @@ public class Engine {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private static final int COUNTDOWN_LENGTH = 3;
-    private static final float INTRO_LENGTH = 2*3;
+    private static final float INTRO_LENGTH = 4*3;
     
     private static final int S_PLAYING = 0;
     private static final int S_DEAD = 1;
@@ -172,7 +172,7 @@ public class Engine {
                 }else if(state == S_CONTROLS) {
                     level.render(g);
                     g.drawImage(ResourceLoader.getImage("controls.png"), 0, 0, WIDTH, HEIGHT, null);
-                    if(inp.keyDown(KeyEvent.VK_SPACE) | inp.keyDown(KeyEvent.VK_ENTER)) {
+                    if(inp.keyDown(KeyEvent.VK_SPACE) | inp.keyDown(KeyEvent.VK_ENTER) | inp.keyDown(KeyEvent.VK_ESCAPE)) {
                         ResourceLoader.playSound(ResourceLoader.getSound("select.wav"));
                         state = S_MAIN_MENU;
                     }
@@ -181,7 +181,7 @@ public class Engine {
                     g.drawImage(ResourceLoader.getImage("highscore.png"), 0, 0, WIDTH, HEIGHT, null);
                     Util.renderNumber(highscore, g, 287*2, 130*2+1, 5);
                     Util.renderNumber(highscoreHardcore, g, 287*2, 151*2+1, 5);
-                    if(inp.keyDown(KeyEvent.VK_SPACE) | inp.keyDown(KeyEvent.VK_ENTER)) {
+                    if(inp.keyDown(KeyEvent.VK_SPACE) | inp.keyDown(KeyEvent.VK_ENTER) | inp.keyDown(KeyEvent.VK_ESCAPE)) {
                         ResourceLoader.playSound(ResourceLoader.getSound("select.wav"));
                         state = S_MAIN_MENU;
                     }
@@ -212,6 +212,7 @@ public class Engine {
                 screen.repaint();
             }
         }
+        music.stop();
         screen.dispose();
     }
 }
