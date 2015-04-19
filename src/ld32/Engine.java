@@ -2,9 +2,12 @@ package ld32;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.io.PrintWriter;
 import org.newdawn.easyogg.OggClip;
 
 
@@ -40,8 +43,23 @@ public class Engine {
         state = S_INTRO;
         countdown = 0;
         timer = 0;
-        highscore = 0;
-        highscoreHardcore = 0;
+        
+        File highscoreFile = new File("./highscores");
+        if(highscoreFile.exists()) {
+            try {
+                BufferedReader in = new BufferedReader(new FileReader(highscoreFile));
+                highscore = Integer.parseInt(in.readLine());
+                highscoreHardcore = Integer.parseInt(in.readLine());
+                in.close();
+            } catch (IOException | NumberFormatException ex) {
+                ex.printStackTrace();
+                highscore = 0;
+                highscoreHardcore = 0;
+            }
+        }else {
+            highscore = 0;
+            highscoreHardcore = 0;
+        }
         ResourceLoader.getSound("level_end.wav");
         ResourceLoader.getSound("select.wav");
         ResourceLoader.getImage("intro1.png");
@@ -211,6 +229,16 @@ public class Engine {
                 }
                 screen.repaint();
             }
+        }
+        
+        try {
+            PrintWriter out = new PrintWriter("./highscores");
+            out.println(highscore);
+            out.println(highscoreHardcore);
+            out.flush();
+            out.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
         music.stop();
         screen.dispose();
