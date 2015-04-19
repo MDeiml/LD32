@@ -13,18 +13,22 @@ public class Engine {
     private static final int FPS = 60;
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
+    private static final int COUNTDOWN_LENGTH = 3;
     
     private static final int S_PLAYING = 0;
     private static final int S_DEAD = 1;
+    private static final int S_COUNTDOWN = 2;
     
     private boolean running;
     private Screen screen;
     private int state;
+    private float timer;
     
     public Engine() {
         screen = new Screen(WIDTH, HEIGHT);
         running = false;
-        state = S_PLAYING;
+        state = S_COUNTDOWN;
+        timer = 0;
         ResourceLoader.getSound("level_end.wav");
     }
     
@@ -44,7 +48,7 @@ public class Engine {
             ex.printStackTrace();
             System.exit(1);
         }
-        music.loop();
+//        music.loop();
         
         String currentLevel = "level1";
         Level level = new Level(currentLevel);
@@ -72,11 +76,22 @@ public class Engine {
                 }else if(state == S_DEAD) {
                     g.drawImage(ResourceLoader.getImage("dead.png"), 0, 0, WIDTH, HEIGHT, null);
                     if(inp.keyDown(KeyEvent.VK_SPACE)) {
-                        state = S_PLAYING;
+                        state = S_COUNTDOWN;
+                        timer = 0;
                         level = new Level(currentLevel);
+                    }
+                }else if(state == S_COUNTDOWN) {
+                    timer = Math.min(timer + 1f/FPS, COUNTDOWN_LENGTH);
+                    int number = COUNTDOWN_LENGTH - (int)(timer)-1;
+                    level.render(g);
+                    g.drawImage(ResourceLoader.getImage("countdown.png"), 325, 175, 475, 425, number*3, 0, number*3+3, 5, screen);
+                    if(timer >= COUNTDOWN_LENGTH) {
+                        state = S_PLAYING;
                     }
                 }
                 if(level.isFinished()) {
+                    state = S_COUNTDOWN;
+                    timer = 0;
                     currentLevel = level.getNextLevel();
                     level = new Level(currentLevel);
                     ResourceLoader.playSound(ResourceLoader.getSound("level_end.wav"));

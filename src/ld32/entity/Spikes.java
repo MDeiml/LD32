@@ -22,7 +22,21 @@ public class Spikes extends Entity {
         
         
         int dx1 = (int)(getX() * 64);
-        int dy1 = (int)(getY() * 64)+4;
+        int dy1 = (int)(getY() * 64);
+        switch(id) {
+            case 0:
+                dy1 += 4;
+                break;
+            case 1:
+                dy1 += 4;
+                break;
+            case 2:
+                dy1 -= 4;
+                break;
+            case 3:
+                dy1 -= 4;
+                break;
+        }
         int dx2 = dx1 + 64;
         int dy2 = dy1 + 64;
         int sx1 = id * 32;

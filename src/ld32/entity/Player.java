@@ -67,18 +67,18 @@ public class Player extends Entity {
             if(e instanceof Wall) {
                 Wall w = (Wall) e;
                 
-                float pxr = (w.getX()+1)-getX();
-                float pxl = (getX()+1)-w.getX();
-                float pyb = (w.getY()+1)-getY();
+                float pxr = (w.getX()+1)-(getX()+0.2f);
+                float pxl = (getX()+0.8f)-w.getX();
+                float pyb = (w.getY()+1)-(getY()+0.1f);
                 float pyt = (getY()+1)-w.getY();
                 if(pxr > 0 && pxl > 0 && pyb > 0 && pyt > 0) {
                     float px = Math.min(pxr, pxl);
                     float py = Math.min(pyb, pyt);
                     if(px < py+0.075f) {
                         if(pxr < pxl) {
-                            setX(w.getX()+1);
+                            setX(w.getX()+0.8f);
                         }else {
-                            setX(w.getX()-1);
+                            setX(w.getX()-0.8f);
                         }
                         if(lastOnGround) {
                             explode = true;
@@ -87,7 +87,7 @@ public class Player extends Entity {
                         }
                     }else {
                         if(pyb < pyt) {
-                            setY(w.getY()+1);
+                            setY(w.getY()+0.9f);
                             velY = Math.max(0, velY);
                         }else {
                             if(velY >= 0) {
@@ -101,9 +101,9 @@ public class Player extends Entity {
             }else if(e instanceof JumpPad) {
                 JumpPad jp = (JumpPad)e;
                 if(!jp.isExtended()) {
-                    float pxr = (jp.getX()+1)-getX();
-                    float pxl = (getX()+1)-jp.getX();
-                    float pyb = (jp.getY()+0.5f)-getY();
+                    float pxr = (jp.getX()+0.8f)-(getX()+0.2f);
+                    float pxl = (getX()+0.8f)-(jp.getX()+0.2f);
+                    float pyb = (jp.getY()+0.5f)-(getY()+0.1f);
                     float pyt = (getY()+1)-(jp.getY()+0.5f);
                     if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
                         jp.extend();
@@ -111,28 +111,33 @@ public class Player extends Entity {
                     }
                 }
             }else if(e instanceof Flag) {
-                float pxr = (e.getX()+0.75f)-getX();
-                float pxl = (getX()+1)-(e.getX()+0.25f);
-                float pyb = (e.getY()+1)-getY();
+                float pxr = (e.getX()+0.75f)-(getX()+0.2f);
+                float pxl = (getX()+0.8f)-(e.getX()+0.25f);
+                float pyb = (e.getY()+1)-(getY()+0.1f);
                 float pyt = (getY()+1)-e.getY();
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
                     getLevel().setFinished(true);
                 }
             }else if(e instanceof Spikes) {
-                float pxr = (e.getX()+1)-getX();
-                float pxl = (getX()+1)-e.getX();
-                float pyb = (e.getY()+1)-getY();
+                float pxr = (e.getX()+1)-(getX()+0.2f);
+                float pxl = (getX()+0.8f)-e.getX();
+                float pyb = (e.getY()+1)-(getY()+0.1f);
                 float pyt = (getY()+1)-e.getY();
+                
+                pxr -= 0.1f;
+                pxl -= 0.1f;
+                pyt -= 0.1f;
+                pyb -= 0.1f;
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
                     explode();
                 }
             }else if(e instanceof Platform) {
                 Platform p = (Platform)e;
-                float pxr = (e.getX()+1)-getX();
-                float pxl = (getX()+1)-e.getX();
-                float pyb = (e.getY()+0.5f)-getY();
+                float pxr = (e.getX()+1)-(getX()+0.2f);
+                float pxl = (getX()+0.8f)-e.getX();
+                float pyb = (e.getY()+0.5f)-(getY()+0.1f);
                 float pyt = (getY()+1)-e.getY();
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
@@ -174,9 +179,9 @@ public class Player extends Entity {
                     }
                 }
             }else if(e instanceof Fireball) {
-                float pxr = (e.getX()+0.75f)-getX();
-                float pxl = (getX()+1)-(e.getX()+0.25f);
-                float pyb = (e.getY()+0.75f)-getY();
+                float pxr = (e.getX()+0.75f)-(getX()+0.2f);
+                float pxl = (getX()+0.8f)-(e.getX()+0.25f);
+                float pyb = (e.getY()+0.75f)-(getY()+0.1f);
                 float pyt = (getY()+1)-(e.getY()+0.25f);
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
