@@ -25,16 +25,19 @@ public class Engine {
     private Screen screen;
     private int state;
     private float timer;
+    private float countdown;
     
     public Engine() {
         screen = new Screen(WIDTH, HEIGHT);
         running = false;
         state = S_INTRO;
+        countdown = 0;
         timer = 0;
         ResourceLoader.getSound("level_end.wav");
         ResourceLoader.getImage("intro1.png");
         ResourceLoader.getImage("intro2.png");
         ResourceLoader.getImage("intro3.png");
+        ResourceLoader.getImage("numbers.png");
     }
     
     public void start() {
@@ -72,7 +75,9 @@ public class Engine {
                 inp.update();
                 if(state == S_PLAYING) {
                     level.update(1f/FPS, inp);
+                    timer += 1f/FPS;
                     level.render(g);
+                    Util.renderNumber((int)timer, g, 50, 50, 4);
                     if(level.getPlayer().isExploded())
                         state = S_DEAD;
                     if(inp.keyDown(KeyEvent.VK_R) || level.getPlayer().getY() > HEIGHT / 32f + 1) {
@@ -82,30 +87,31 @@ public class Engine {
                     g.drawImage(ResourceLoader.getImage("dead.png"), 0, 0, WIDTH, HEIGHT, null);
                     if(inp.keyDown(KeyEvent.VK_SPACE)) {
                         state = S_COUNTDOWN;
-                        timer = 0;
+                        countdown = 0;
                         level = new Level(currentLevel);
                     }
                 }else if(state == S_COUNTDOWN) {
-                    timer = Math.min(timer + 1f/FPS, COUNTDOWN_LENGTH);
-                    int number = COUNTDOWN_LENGTH - (int)(timer)-1;
+                    countdown = Math.min(countdown + 1f/FPS, COUNTDOWN_LENGTH);
+                    int number = COUNTDOWN_LENGTH - (int)(countdown);
                     level.render(g);
-                    g.drawImage(ResourceLoader.getImage("countdown.png"), 325, 175, 475, 425, number*3, 0, number*3+3, 5, screen);
-                    if(timer >= COUNTDOWN_LENGTH) {
+                    Util.renderNumber((int)timer, g, 50, 50, 4);
+                    g.drawImage(ResourceLoader.getImage("numbers.png"), 325, 175, 475, 425, number*3, 0, number*3+3, 5, screen);
+                    if(countdown >= COUNTDOWN_LENGTH) {
                         state = S_PLAYING;
                     }
                 }else if(state == S_INTRO) {
-                    timer = Math.min(timer + 1f/FPS, INTRO_LENGTH);
-                    int id = (int)(timer/INTRO_LENGTH*3)+1;
+                    countdown = Math.min(countdown + 1f/FPS, INTRO_LENGTH);
+                    int id = (int)(countdown/INTRO_LENGTH*3)+1;
                     if(id >= 4) {
                         state = S_COUNTDOWN;
-                        timer = 0;
+                        countdown = 0;
                         continue;
                     }
                     g.drawImage(ResourceLoader.getImage("intro"+id+".png"), 0, 0, WIDTH, HEIGHT, null);
                 }
                 if(level.isFinished()) {
                     state = S_COUNTDOWN;
-                    timer = 0;
+                    countdown = 0;
                     currentLevel = level.getNextLevel();
                     if(currentLevel.equals("END"))
                         running = false;
