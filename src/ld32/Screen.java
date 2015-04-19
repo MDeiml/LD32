@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 
 public class Screen extends Frame {
     
-    private static final String TITLE = "LD32";
+    private static final String TITLE = "James Bomb";
     
     private boolean closeRequested;
     private BufferedImage buffer;
@@ -27,6 +27,7 @@ public class Screen extends Frame {
         setResizable(false);
         setLocationRelativeTo(null);
         setTitle(TITLE);
+        setIconImage(ResourceLoader.getImage("ld.png"));
         
         input = new InputManager();
         addKeyListener(input);
