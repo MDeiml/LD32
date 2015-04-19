@@ -20,12 +20,15 @@ public class Engine {
     private static final int S_DEAD = 1;
     private static final int S_COUNTDOWN = 2;
     private static final int S_INTRO = 3;
+    private static final int S_MAIN_MENU = 4;
     
     private boolean running;
     private Screen screen;
     private int state;
     private float timer;
     private float countdown;
+    private int selection;
+    private int highscore;
     
     public Engine() {
         screen = new Screen(WIDTH, HEIGHT);
@@ -33,6 +36,7 @@ public class Engine {
         state = S_INTRO;
         countdown = 0;
         timer = 0;
+        highscore = 0;
         ResourceLoader.getSound("level_end.wav");
         ResourceLoader.getImage("intro1.png");
         ResourceLoader.getImage("intro2.png");
@@ -103,11 +107,33 @@ public class Engine {
                     countdown = Math.min(countdown + 1f/FPS, INTRO_LENGTH);
                     int id = (int)(countdown/INTRO_LENGTH*3)+1;
                     if(id >= 4) {
-                        state = S_COUNTDOWN;
-                        countdown = 0;
+                        state = S_MAIN_MENU;
+                        selection = 0;
                         continue;
                     }
                     g.drawImage(ResourceLoader.getImage("intro"+id+".png"), 0, 0, WIDTH, HEIGHT, null);
+                }else if(state == S_MAIN_MENU) {
+                    if(inp.keyDown(KeyEvent.VK_S) | inp.keyDown(KeyEvent.VK_DOWN))
+                        selection = (selection + 1) % 4;
+                    if(inp.keyDown(KeyEvent.VK_W) | inp.keyDown(KeyEvent.VK_UP))
+                        selection = (selection + 3) % 4;
+                    if(inp.keyDown(KeyEvent.VK_SPACE) | inp.keyDown(KeyEvent.VK_ENTER)) {
+                        switch(selection) {
+                            case 0:
+                                state = S_COUNTDOWN;
+                                countdown = 0;
+                                break;
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                running = false;
+                                break;
+                        }
+                    }
+                    level.render(g);
+                    g.drawImage(ResourceLoader.getImage("main_menu.png"), 0, 0, WIDTH, HEIGHT, null);
                 }
                 if(level.isFinished()) {
                     state = S_COUNTDOWN;

@@ -48,9 +48,9 @@ public class Player extends Entity {
         animationTime = (animationTime + delta) % ANIMATION_LENGTH;
         
         float dx, dy = 0;
-        if(input.keyDown(KeyEvent.VK_A))
+        if(input.keyDown(KeyEvent.VK_A) | input.keyDown(KeyEvent.VK_LEFT))
             direction = false;
-        if(input.keyDown(KeyEvent.VK_D))
+        if(input.keyDown(KeyEvent.VK_D) | input.keyDown(KeyEvent.VK_RIGHT))
             direction = true;
         
         if(direction)
@@ -223,7 +223,7 @@ public class Player extends Entity {
             explodeTime = 0;
         }
         
-        if(onGround && input.keyDown(KeyEvent.VK_SPACE)) {
+        if(onGround && (input.keyDown(KeyEvent.VK_SPACE) | input.keyDown(KeyEvent.VK_W) | input.keyDown(KeyEvent.VK_UP))) {
             velY = -8;
             ResourceLoader.playSound(ResourceLoader.getSound("jump.wav"));
         }else {
