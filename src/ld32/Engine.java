@@ -21,6 +21,8 @@ public class Engine {
     private static final int S_COUNTDOWN = 2;
     private static final int S_INTRO = 3;
     private static final int S_MAIN_MENU = 4;
+    private static final int S_CONTROLS = 5;
+    private static final int S_HIGHSCORE = 6;
     
     private boolean running;
     private Screen screen;
@@ -29,6 +31,7 @@ public class Engine {
     private float countdown;
     private int selection;
     private int highscore;
+    private int highscoreHardcore;
     private boolean hardcore;
     
     public Engine() {
@@ -38,6 +41,7 @@ public class Engine {
         countdown = 0;
         timer = 0;
         highscore = 0;
+        highscoreHardcore = 0;
         ResourceLoader.getSound("level_end.wav");
         ResourceLoader.getSound("select.wav");
         ResourceLoader.getImage("intro1.png");
@@ -141,16 +145,20 @@ public class Engine {
                         switch(selection) {
                             case 0:
                                 state = S_COUNTDOWN;
+                                timer = 0;
                                 hardcore = false;
                                 countdown = 0;
                                 break;
                             case 1:
+                                state = S_HIGHSCORE;
                                 break;
                             case 2:
+                                state = S_CONTROLS;
                                 break;
                             case 3:
                                 state = S_COUNTDOWN;
                                 hardcore = true;
+                                timer = 0;
                                 countdown = 0;
                                 break;
                             case 4:
@@ -161,14 +169,39 @@ public class Engine {
                     level.render(g);
                     g.drawImage(ResourceLoader.getImage("main_menu.png"), 0, 0, WIDTH, HEIGHT, null);
                     g.drawImage(ResourceLoader.getImage("selector.png"), 105*2, 68*2+selection*22*2, 32, 32, null);
+                }else if(state == S_CONTROLS) {
+                    level.render(g);
+                    g.drawImage(ResourceLoader.getImage("controls.png"), 0, 0, WIDTH, HEIGHT, null);
+                    if(inp.keyDown(KeyEvent.VK_SPACE) | inp.keyDown(KeyEvent.VK_ENTER)) {
+                        ResourceLoader.playSound(ResourceLoader.getSound("select.wav"));
+                        state = S_MAIN_MENU;
+                    }
+                }else if(state == S_HIGHSCORE) {
+                    level.render(g);
+                    g.drawImage(ResourceLoader.getImage("highscore.png"), 0, 0, WIDTH, HEIGHT, null);
+                    Util.renderNumber(highscore, g, 287*2, 130*2+1, 5);
+                    Util.renderNumber(highscoreHardcore, g, 287*2, 151*2+1, 5);
+                    if(inp.keyDown(KeyEvent.VK_SPACE) | inp.keyDown(KeyEvent.VK_ENTER)) {
+                        ResourceLoader.playSound(ResourceLoader.getSound("select.wav"));
+                        state = S_MAIN_MENU;
+                    }
                 }
                 if(level.isFinished()) {
                     state = S_COUNTDOWN;
                     countdown = 0;
                     currentLevel = level.getNextLevel();
                     if(currentLevel.equals("END")){
-                        state = S_MAIN_MENU;
+                        state = S_HIGHSCORE;
                         selection = 0;
+                        if(hardcore) {
+                            if(timer < highscoreHardcore || highscoreHardcore == 0) {
+                                highscoreHardcore = (int)timer;
+                            }
+                        }else {
+                            if(timer < highscore || highscore == 0) {
+                                highscore = (int)timer;
+                            }
+                        }
                         currentLevel = "level1";
                         level = new Level(currentLevel);
                     }else {
