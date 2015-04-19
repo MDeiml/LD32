@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import ld32.entity.Decoration;
 import ld32.entity.Fireball;
 import ld32.entity.Platform;
+import ld32.entity.Water;
 
 
 public class Level {
@@ -100,6 +101,9 @@ public class Level {
                             break;
                         case "FH":
                             entities.add(new Fireball(x, y, this, true));
+                            break;
+                        case "W":
+                            entities.add(new Water(x, y, this));
                             break;
                         case "_":
                             break;

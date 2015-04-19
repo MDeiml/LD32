@@ -26,6 +26,7 @@ public class Player extends Entity {
     private boolean lastOnGround;
     private float velY;
     private boolean exploded;
+    private boolean inWater;
     private Clip fuss;
     
     public Player(float x, float y, Level l) {
@@ -34,10 +35,12 @@ public class Player extends Entity {
         sprite = ResourceLoader.getImage("player.png");
         ResourceLoader.getSound("explode.wav");
         ResourceLoader.getSound("jump.wav");
+        ResourceLoader.getSound("splash.wav");
         fuss = ResourceLoader.getSound("fuss.wav");
         direction = true;
         velY = 0;
         exploded = false;
+        inWater = false;
     }
     
     @Override
@@ -62,6 +65,7 @@ public class Player extends Entity {
         
         boolean onGround = false;
         boolean explode = false;
+        boolean inWater1 = false;
         
         for(Entity e : getLevel().getEntities()) {
             if(e instanceof Wall) {
@@ -118,6 +122,21 @@ public class Player extends Entity {
                 
                 if(pxr > 0 && pxl > 0 && pyt > 0 && pyb > 0) {
                     getLevel().setFinished(true);
+                }
+            }else if(e instanceof Water) {
+                float pxr = (e.getX()+1)-(getX()+0.2f);
+                float pxl = (getX()+0.8f)-e.getX();
+                float pyb = (e.getY()+1)-(getY()+0.1f);
+                float pyt1 = (getY()+1)-(e.getY()+0.1f);
+                float pyt = (getY()+1)-(e.getY()+0.8f);
+                
+                if(pxr > 0 && pxl > 0 && pyb > 0) {
+                    if(pyt1 > 0) {
+                        if(!inWater) ResourceLoader.playSound(ResourceLoader.getSound("splash.wav"));
+                        inWater1 = true;
+                        if(pyt > 0)
+                            getLevel().setFinished(true);
+                    }
                 }
             }else if(e instanceof Spikes) {
                 float pxr = (e.getX()+1)-(getX()+0.2f);
@@ -189,6 +208,8 @@ public class Player extends Entity {
                 }
             }
         }
+        
+        inWater = inWater1;
         
         if(explode) {
             if(explodeTime > 0.05 && !fuss.isRunning()) {

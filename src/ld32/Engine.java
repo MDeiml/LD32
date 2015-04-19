@@ -107,8 +107,12 @@ public class Engine {
                     state = S_COUNTDOWN;
                     timer = 0;
                     currentLevel = level.getNextLevel();
-                    level = new Level(currentLevel);
-                    ResourceLoader.playSound(ResourceLoader.getSound("level_end.wav"));
+                    if(currentLevel.equals("END"))
+                        running = false;
+                    else {
+                        level = new Level(currentLevel);
+                        ResourceLoader.playSound(ResourceLoader.getSound("level_end.wav"));
+                    }
                 }
                 screen.repaint();
             }
